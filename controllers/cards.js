@@ -14,16 +14,14 @@ module.exports.createCard = (req, res) => {
     .catch((err) => {
       const ERROR_CODE = 400;
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные в метод создания карточки' });
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
-  const { cardId } = req.params;
-
-  Card.findByIdAndRemove(cardId)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
         return res.send({ data: card });
