@@ -24,7 +24,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.send({ message: 'Успешно удалено' });
+        return res.send({ message: 'Успешно удалено' });
       }
       return res.status(404).send({ message: 'Карточка не найдена' });
     })
@@ -55,7 +55,7 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card) {
         return res.send({ data: card });
