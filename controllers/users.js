@@ -11,7 +11,13 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные в метод создания пользователя' });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.getUserId = (req, res) => {
