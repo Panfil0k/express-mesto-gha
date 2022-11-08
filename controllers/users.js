@@ -24,8 +24,19 @@ module.exports.getUserId = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .then((user) => {
+      if (user) {
+        return res.send({ data: user });
+      }
+      return res.status(404).send({ message: 'Пользователь не найден' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.updateUserInfo = (req, res) => {
