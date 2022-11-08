@@ -44,10 +44,10 @@ module.exports.updateUserInfo = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+      if (user) {
+        return res.send({ data: user });
       }
-      return res.send({ data: user });
+      return res.status(404).send({ message: 'Пользователь не найден' });
     })
     .catch((err) => {
       const ERROR_CODE = 400;
@@ -63,10 +63,10 @@ module.exports.updateUserAvatar = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+      if (user) {
+        return res.send({ data: user });
       }
-      return res.send({ data: user });
+      return res.status(404).send({ message: 'Пользователь не найден' });
     })
     .catch((err) => {
       const ERROR_CODE = 400;
