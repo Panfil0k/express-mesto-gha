@@ -16,7 +16,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные в метод создания пользователя' });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -35,22 +35,44 @@ module.exports.getUserId = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.params.id, { name, about })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+  User.findByIdAndUpdate(req.params.id, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (user) {
+        return res.send({ data: user });
+      }
+      return res.status(404).send({ message: 'Пользователь не найден' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.params.id, { avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+  User.findByIdAndUpdate(req.params.id, { avatar }, { new: true, runValidators: true })
+    .then((user) => {
+      if (user) {
+        return res.send({ data: user });
+      }
+      return res.status(404).send({ message: 'Пользователь не найден' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
