@@ -3,6 +3,6 @@ module.exports = {
     'airbnb-base',
   ],
   rules: {
-    'no-underscore-dangle': 0,
+    'no-underscore-dangle': [1, { allow: ['_id'] }],
   },
 };
