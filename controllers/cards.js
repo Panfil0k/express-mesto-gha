@@ -21,7 +21,6 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .populate('owner')
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -49,7 +48,6 @@ const deleteCard = (req, res) => {
 
 const likeHandler = (req, res, handler) => {
   Card.findByIdAndUpdate(req.params.cardId, handler, { new: true })
-    .populate('likes')
     .then((card) => {
       if (card) {
         return res.send({ data: card });
