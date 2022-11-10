@@ -1,72 +1,77 @@
 const Card = require('../models/card');
+const {
+  REQUEST_ERROR,
+  SERVER_ERROR,
+  NOT_FOUND_ERROR,
+  MESSAGE_SERVER_ERROR,
+  MESSAGE_REQUEST_ERROR,
+  MESSAGE_NOT_FOUND_ERROR,
+} = require('../utils/constants');
 
-module.exports.getCards = (req, res) => {
+const getCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
-};
-
-module.exports.createCard = (req, res) => {
-  const { name, link } = req.body;
-
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    .catch(() => {
+      res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+const createCard = (req, res) => {
+  const { name, link } = req.body;
+
+  Card.create({ name, link, owner: req.user._id })
+    .populate('owner')
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
+      }
+      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
+    });
+};
+
+const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
         return res.send({ data: card });
       }
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      return res.status(NOT_FOUND_ERROR).send({ message: MESSAGE_NOT_FOUND_ERROR });
     })
     .catch((err) => {
-      const ERROR_CODE = 400;
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
-module.exports.likeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+const likeHandler = (req, res, handler) => {
+  Card.findByIdAndUpdate(req.params.cardId, handler, { new: true })
+    .populate('likes')
     .then((card) => {
       if (card) {
         return res.send({ data: card });
       }
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      return res.status(NOT_FOUND_ERROR).send({ message: MESSAGE_NOT_FOUND_ERROR });
     })
     .catch((err) => {
-      const ERROR_CODE = 400;
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => {
-      if (card) {
-        return res.send({ data: card });
-      }
-      return res.status(404).send({ message: 'Карточка не найдена' });
-    })
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+const likeCard = (req, res) => {
+  likeHandler(req, res, { $addToSet: { likes: req.user._id } });
+};
+
+const dislikeCard = (req, res) => {
+  likeHandler(req, res, { $pull: { likes: req.user._id } });
+};
+
+module.exports = {
+  getCards, createCard, deleteCard, likeCard, dislikeCard,
 };
