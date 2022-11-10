@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { usersRouter, cardsRouter } = require('./routes/index');
+const routers = require('./routes/index');
 
 const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -18,10 +18,6 @@ app.use((req, res, next) => {
 
   next();
 });
-app.use(usersRouter);
-app.use(cardsRouter);
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемая страница не найдена' });
-});
+app.use(routers);
 
 app.listen(PORT);

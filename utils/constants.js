@@ -1,3 +1,4 @@
+const CREATED_STATUS = 201;
 const REQUEST_ERROR = 400;
 const SERVER_ERROR = 500;
 const NOT_FOUND_ERROR = 404;
@@ -6,6 +7,7 @@ const MESSAGE_REQUEST_ERROR = 'Переданы некорректные дан�
 const MESSAGE_NOT_FOUND_ERROR = 'Информация не найдена';
 
 module.exports = {
+  CREATED_STATUS,
   REQUEST_ERROR,
   SERVER_ERROR,
   NOT_FOUND_ERROR,
