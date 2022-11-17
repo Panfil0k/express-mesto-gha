@@ -33,7 +33,7 @@ const createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
-    }).select('+password'))
+    }))
     .then((user) => {
       res.status(CREATED_STATUS).send({
         name: user.name,
@@ -114,11 +114,12 @@ const login = (req, res) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
-      res.send.cookie('jwt', token, {
+      res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         sameSite: true,
       });
+      res.send();
     })
     .catch((err) => {
       res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
