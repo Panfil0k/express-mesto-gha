@@ -31,7 +31,7 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      if (card) {
+      if (card.owner === req.user._id) {
         return res.send({ data: card });
       }
       throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
