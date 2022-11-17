@@ -2,7 +2,6 @@ const OK_STATUS = 200;
 const CREATED_STATUS = 201;
 
 const SERVER_ERROR = 500;
-const NOT_FOUND_ERROR = 404;
 
 const MESSAGE_SERVER_ERROR = 'На сервере произошла ошибка';
 const MESSAGE_REQUEST_ERROR = 'Переданы некорректные данные';
@@ -15,7 +14,6 @@ module.exports = {
   OK_STATUS,
   CREATED_STATUS,
   SERVER_ERROR,
-  NOT_FOUND_ERROR,
   MESSAGE_SERVER_ERROR,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
