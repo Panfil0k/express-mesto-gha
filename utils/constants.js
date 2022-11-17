@@ -8,6 +8,7 @@ const MESSAGE_REQUEST_ERROR = 'Переданы некорректные дан�
 const MESSAGE_NOT_FOUND_ERROR = 'Информация не найдена';
 const MESSAGE_UNAUTHORIZED_ERROR = 'Неправильные почта или пароль';
 const MESSAGE_AUTHENTICATION_ERROR = 'Необходима авторизация';
+const MESSAGE_CONFLICT_REQUEST_ERROR = 'Пользователь с таким email уже зарегистрирован';
 
 module.exports = {
   CREATED_STATUS,
@@ -20,4 +21,5 @@ module.exports = {
   MESSAGE_NOT_FOUND_ERROR,
   MESSAGE_UNAUTHORIZED_ERROR,
   MESSAGE_AUTHENTICATION_ERROR,
+  MESSAGE_CONFLICT_REQUEST_ERROR,
 };

@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NOT_FOUND_ERROR = require('../errors/NotFoundError');
+const CONFLICT_REQUEST_ERROR = require('../errors/ConflictRequestError');
 const {
   CREATED_STATUS,
   REQUEST_ERROR,
@@ -11,6 +12,7 @@ const {
   MESSAGE_SERVER_ERROR,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
+  MESSAGE_CONFLICT_REQUEST_ERROR,
 } = require('../utils/constants');
 
 const secretKey = crypto
@@ -23,7 +25,7 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
@@ -32,19 +34,24 @@ const createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }).select('+password'))
-    .then((user) => res.status(CREATED_STATUS).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-      _id: user._id,
-    }))
+    .then((user) => {
+      res.status(CREATED_STATUS).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
+    })
     .catch((err) => {
+      if (err.code === 11000) {
+        throw new CONFLICT_REQUEST_ERROR(MESSAGE_CONFLICT_REQUEST_ERROR);
+      }
       if (err.name === 'ValidationError') {
         return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
       }
       return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
-    });
+    })
+    .catch(next);
 };
 
 const getUserId = (req, res) => {
