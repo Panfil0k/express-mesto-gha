@@ -1,11 +1,6 @@
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 const UNAUTHORIZED_ERROR = require('../errors/UnauthorizedError');
 const { MESSAGE_AUTHENTICATION_ERROR } = require('../utils/constants');
-
-const secretKey = crypto
-  .randomBytes(16)
-  .toString('hex');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -19,7 +14,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, secretKey);
+    payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
     next(new UNAUTHORIZED_ERROR(MESSAGE_AUTHENTICATION_ERROR));
   }
