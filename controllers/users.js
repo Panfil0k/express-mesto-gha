@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NOT_FOUND_ERROR = require('../errors/NotFoundError');
 const CONFLICT_REQUEST_ERROR = require('../errors/ConflictRequestError');
 const {
+  OK_STATUS,
   CREATED_STATUS,
   REQUEST_ERROR,
   SERVER_ERROR,
@@ -126,6 +127,14 @@ const login = (req, res) => {
     });
 };
 
+const getAuthorizedUser = (req, res, next) => {
+  User.findById(req.user)
+    .then((user) => {
+      res.status(OK_STATUS).send(user);
+    })
+    .catch(next);
+};
+
 module.exports = {
-  getUsers, createUser, getUserId, updateUserInfo, updateUserAvatar, login,
+  getUsers, createUser, getUserId, updateUserInfo, updateUserAvatar, login, getAuthorizedUser,
 };

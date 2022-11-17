@@ -1,3 +1,4 @@
+const OK_STATUS = 200;
 const CREATED_STATUS = 201;
 const REQUEST_ERROR = 400;
 const SERVER_ERROR = 500;
@@ -11,6 +12,7 @@ const MESSAGE_AUTHENTICATION_ERROR = 'Необходима авторизаци�
 const MESSAGE_CONFLICT_REQUEST_ERROR = 'Пользователь с таким email уже зарегистрирован';
 
 module.exports = {
+  OK_STATUS,
   CREATED_STATUS,
   REQUEST_ERROR,
   SERVER_ERROR,
