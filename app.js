@@ -1,9 +1,8 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
-const { errors } = require('celebrate');
-const routers = require('./routes/index');
+const { celebrate, Joi, errors } = require('celebrate');
+const routes = require('./routes/index');
 const auth = require('./middlewares/auth');
 const {
   createUser, login,
@@ -29,13 +28,13 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().uri({ scheme: [/https?/] }).allow(''),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }).unknown(true),
 }), createUser);
 app.use(auth);
-app.use(routers);
+app.use(routes);
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
