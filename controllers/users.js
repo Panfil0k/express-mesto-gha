@@ -32,7 +32,13 @@ const createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }).select('+password'))
-    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
+    .then((user) => res.status(CREATED_STATUS).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
