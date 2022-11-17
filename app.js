@@ -7,6 +7,10 @@ const auth = require('./middlewares/auth');
 const {
   createUser, login,
 } = require('./controllers/users');
+const {
+  SERVER_ERROR,
+  MESSAGE_SERVER_ERROR,
+} = require('./utils/constants');
 
 const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -24,6 +28,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -33,16 +38,18 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }).unknown(true),
 }), createUser);
+
 app.use(auth);
 app.use(routes);
 app.use(errors());
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
+  const { statusCode = SERVER_ERROR, message } = err;
 
   res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'На сервере произошла ошибка'
+    message: statusCode === SERVER_ERROR
+      ? MESSAGE_SERVER_ERROR
       : message,
   });
 });

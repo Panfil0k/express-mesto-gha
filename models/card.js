@@ -10,6 +10,7 @@ const cardSchema = mongoose.Schema({
   link: {
     type: String,
     required: true,
+    match: /(http|https):\/\/([\w.]+\/?)\S*/,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

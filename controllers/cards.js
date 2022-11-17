@@ -1,64 +1,64 @@
 const Card = require('../models/card');
+const REQUEST_ERROR = require('../errors/RequestError');
+const NOT_FOUND_ERROR = require('../errors/NotFoundError');
 const {
-  REQUEST_ERROR,
-  SERVER_ERROR,
-  NOT_FOUND_ERROR,
-  MESSAGE_SERVER_ERROR,
+  CREATED_STATUS,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
 } = require('../utils/constants');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
-    .catch(() => {
-      res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
-    });
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
+        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+      } else {
+        next(err);
       }
-      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
         return res.send({ data: card });
       }
-      return res.status(NOT_FOUND_ERROR).send({ message: MESSAGE_NOT_FOUND_ERROR });
+      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
+        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+      } else {
+        next(err);
       }
-      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
-const likeHandler = (req, res, handler) => {
+const likeHandler = (req, res, next, handler) => {
   Card.findByIdAndUpdate(req.params.cardId, handler, { new: true })
     .then((card) => {
       if (card) {
         return res.send({ data: card });
       }
-      return res.status(NOT_FOUND_ERROR).send({ message: MESSAGE_NOT_FOUND_ERROR });
+      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(REQUEST_ERROR).send({ message: MESSAGE_REQUEST_ERROR });
+        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+      } else {
+        next(err);
       }
-      return res.status(SERVER_ERROR).send({ message: MESSAGE_SERVER_ERROR });
     });
 };
 
