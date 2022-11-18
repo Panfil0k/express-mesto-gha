@@ -132,11 +132,19 @@ const login = (req, res, next) => {
 
 const getAuthorizedUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(() => new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((user) => {
-      res.status(OK_STATUS).send({ data: user });
+      if (user) {
+        return res.status(OK_STATUS).send({ data: user });
+      }
+      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
