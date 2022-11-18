@@ -17,7 +17,6 @@ const {
 } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
-  console.log(res);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
@@ -121,7 +120,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         });
-        res.send({ token });
+        return res.send({ token });
       }
       throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
     })
@@ -129,10 +128,11 @@ const login = (req, res, next) => {
 };
 
 const getAuthorizedUser = (req, res, next) => {
-  User.findById(req.user._id)
+  console.log(req.params);
+  User.findOne(req.user._id)
     .then((user) => {
       if (user) {
-        return res.status(OK_STATUS).send({ data: user });
+        return res.status(OK_STATUS).send(user);
       }
       throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
     })
