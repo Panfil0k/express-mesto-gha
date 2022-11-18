@@ -123,7 +123,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         });
-        res.send();
+        res.send({ token });
       }
       throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
     })
@@ -131,7 +131,7 @@ const login = (req, res, next) => {
 };
 
 const getAuthorizedUser = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findById(req.user._id)
     .orFail(() => new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((user) => {
       res.status(OK_STATUS).send({ data: user });
