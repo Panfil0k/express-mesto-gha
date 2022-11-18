@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UNAUTHORIZED_ERROR = require('../errors/UnauthorizedError');
-const { MESSAGE_AUTHENTICATION_ERROR } = require('../utils/constants');
+const { MESSAGE_AUTHENTICATION_ERROR, secretKey } = require('../utils/constants');
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token);
+    payload = jwt.verify(token, secretKey);
   } catch (err) {
     next(new UNAUTHORIZED_ERROR(MESSAGE_AUTHENTICATION_ERROR));
   }

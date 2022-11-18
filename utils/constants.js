@@ -10,6 +10,12 @@ const MESSAGE_UNAUTHORIZED_ERROR = 'Неправильные почта или �
 const MESSAGE_AUTHENTICATION_ERROR = 'Необходима авторизация';
 const MESSAGE_CONFLICT_REQUEST_ERROR = 'Пользователь с таким email уже зарегистрирован';
 
+const crypto = require('crypto');
+
+const secretKey = crypto
+  .randomBytes(16)
+  .toString('hex');
+
 module.exports = {
   OK_STATUS,
   CREATED_STATUS,
@@ -20,4 +26,5 @@ module.exports = {
   MESSAGE_UNAUTHORIZED_ERROR,
   MESSAGE_AUTHENTICATION_ERROR,
   MESSAGE_CONFLICT_REQUEST_ERROR,
+  secretKey,
 };
