@@ -131,10 +131,10 @@ const login = (req, res, next) => {
 };
 
 const getAuthorizedUser = (req, res, next) => {
-  User.findById(req.user)
+  User.findById(req.params.userId)
     .orFail(() => new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((user) => {
-      res.status(OK_STATUS).send(user);
+      res.status(OK_STATUS).send({ data: user });
     })
     .catch(next);
 };
