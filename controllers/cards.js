@@ -29,18 +29,24 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (card.owner === req.user._id) {
-        return res.send({ data: card });
-      }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
-      } else {
-        next(err);
+  Card.findById(req.params.cardId)
+    .orFail(() => new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
+    .then((user) => {
+      if (user.owner.toString() === req.user._id) {
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((card) => {
+            if (card) {
+              return res.send({ data: card });
+            }
+            throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+          })
+          .catch((err) => {
+            if (err.name === 'CastError') {
+              next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+            } else {
+              next(err);
+            }
+          });
       }
     });
 };
