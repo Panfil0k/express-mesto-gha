@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-// const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
@@ -16,10 +15,6 @@ const {
   MESSAGE_CONFLICT_REQUEST_ERROR,
   secretKey,
 } = require('../utils/constants');
-
-// const secretKey = crypto
-//   .randomBytes(16)
-//   .toString('hex');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -42,6 +37,7 @@ const createUser = (req, res, next) => {
         about: user.about,
         avatar: user.avatar,
         email: user.email,
+        _id: user._id,
       });
     })
     .catch((err) => {
@@ -124,7 +120,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         });
-        res.send({ token });
+        res.send();
       }
       throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
     })
@@ -132,7 +128,7 @@ const login = (req, res, next) => {
 };
 
 const getAuthorizedUser = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById(req.user)
     .then((user) => {
       if (user) {
         return res.status(OK_STATUS).send({ data: user });
