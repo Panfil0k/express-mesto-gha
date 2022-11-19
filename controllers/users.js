@@ -128,11 +128,10 @@ const login = (req, res, next) => {
 };
 
 const getAuthorizedUser = (req, res, next) => {
-  console.log(req.params);
-  User.findOne(req.user._id)
+  User.findById(req.user._id)
     .then((user) => {
       if (user) {
-        return res.status(OK_STATUS).send(user);
+        return res.status(OK_STATUS).send({ data: user });
       }
       throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
     })
