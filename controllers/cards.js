@@ -68,12 +68,12 @@ const likeHandler = (req, res, next, handler) => {
     });
 };
 
-const likeCard = (req, res) => {
-  likeHandler(req, res, { $addToSet: { likes: req.user._id } });
+const likeCard = (req, res, next) => {
+  likeHandler(req, res, next, { $addToSet: { likes: req.user._id } });
 };
 
-const dislikeCard = (req, res) => {
-  likeHandler(req, res, { $pull: { likes: req.user._id } });
+const dislikeCard = (req, res, next) => {
+  likeHandler(req, res, next, { $pull: { likes: req.user._id } });
 };
 
 module.exports = {
