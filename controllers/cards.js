@@ -3,6 +3,7 @@ const REQUEST_ERROR = require('../errors/RequestError');
 const NOT_FOUND_ERROR = require('../errors/NotFoundError');
 const FORBIDDEN_ERROR = require('../errors/ForbiddenError');
 const {
+  OK_STATUS,
   CREATED_STATUS,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
@@ -36,10 +37,10 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
-      } else if (card.owner.toString() === req.user._id) {
-        return res.send({ data: card });
+      } else if (card.owner.toString() !== req.user._id) {
+        throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
       }
-      throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
+      return res.status(OK_STATUS).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
