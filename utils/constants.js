@@ -9,6 +9,7 @@ const MESSAGE_NOT_FOUND_ERROR = 'Информация не найдена';
 const MESSAGE_UNAUTHORIZED_ERROR = 'Неправильные почта или пароль';
 const MESSAGE_AUTHENTICATION_ERROR = 'Необходима авторизация';
 const MESSAGE_CONFLICT_REQUEST_ERROR = 'Пользователь с таким email уже зарегистрирован';
+const MESSAGE_FORBIDDEN_ERROR = 'Нет прав на удаление карточки';
 
 const crypto = require('crypto');
 
@@ -26,5 +27,6 @@ module.exports = {
   MESSAGE_UNAUTHORIZED_ERROR,
   MESSAGE_AUTHENTICATION_ERROR,
   MESSAGE_CONFLICT_REQUEST_ERROR,
+  MESSAGE_FORBIDDEN_ERROR,
   secretKey,
 };

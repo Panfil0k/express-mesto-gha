@@ -1,10 +1,12 @@
 const Card = require('../models/card');
 const REQUEST_ERROR = require('../errors/RequestError');
 const NOT_FOUND_ERROR = require('../errors/NotFoundError');
+const FORBIDDEN_ERROR = require('../errors/ForbiddenError');
 const {
   CREATED_STATUS,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
+  MESSAGE_FORBIDDEN_ERROR,
 } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
@@ -32,10 +34,12 @@ const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .populate(['owner'])
     .then((card) => {
-      if (card && card.owner.toString() === req.user._id) {
+      if (!card) {
+        throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      } else if (card.owner.toString() === req.user._id) {
         return res.send({ data: card });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
