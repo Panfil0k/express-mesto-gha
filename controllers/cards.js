@@ -37,7 +37,8 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
-      } else if (card.owner.toString() !== req.user._id) {
+      }
+      if (card.owner.toString() !== req.user._id) {
         throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
       }
       return res.status(OK_STATUS).send({ data: card });
