@@ -37,11 +37,10 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
-      }
-      if (card.owner.toString() !== req.user._id) {
+      } else if (card.owner.toString() !== req.user._id) {
         throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
       }
-      return res.status(OK_STATUS).send({});
+      return res.status(OK_STATUS).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
