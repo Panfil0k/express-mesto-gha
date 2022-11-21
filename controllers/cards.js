@@ -32,16 +32,16 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findOne(req.params.cardId)
     .populate(['owner'])
+    .orFail(new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((card) => {
-      if (!card) {
-        throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
-      }
       if (card.owner.toString() !== req.user._id) {
         throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
       }
-      return res.status(OK_STATUS).send({ data: card });
+      Card.deleteOne(req.params.cardId)
+        .orFail(new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
+        .then(() => res.status(OK_STATUS).send({ data: card }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
