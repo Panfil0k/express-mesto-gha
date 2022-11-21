@@ -16,6 +16,8 @@ const {
   secretKey,
 } = require('../utils/constants');
 
+const { SALT = 10 } = process.env;
+
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -27,7 +29,7 @@ const createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
 
-  bcrypt.hash(req.body.password, 10)
+  bcrypt.hash(req.body.password, SALT)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
@@ -115,12 +117,11 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user) {
         const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
-        res.cookie('jwt', token, {
+        return res.cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           sameSite: true,
         });
-        return res.send({ token });
       }
       throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
     })
