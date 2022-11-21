@@ -11,6 +11,8 @@ const MESSAGE_AUTHENTICATION_ERROR = 'Необходима авторизаци�
 const MESSAGE_CONFLICT_REQUEST_ERROR = 'Пользователь с таким email уже зарегистрирован';
 const MESSAGE_FORBIDDEN_ERROR = 'Нет прав на удаление карточки';
 
+const REGEX_URL = /(http|https):\/\/([\w.]+\/?)\S*/;
+
 const crypto = require('crypto');
 
 const secretKey = crypto
@@ -28,5 +30,6 @@ module.exports = {
   MESSAGE_AUTHENTICATION_ERROR,
   MESSAGE_CONFLICT_REQUEST_ERROR,
   MESSAGE_FORBIDDEN_ERROR,
+  REGEX_URL,
   secretKey,
 };

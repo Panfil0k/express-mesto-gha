@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
 const UNAUTHORIZED_ERROR = require('../errors/UnauthorizedError');
-const { MESSAGE_UNAUTHORIZED_ERROR } = require('../utils/constants');
+const { MESSAGE_UNAUTHORIZED_ERROR, REGEX_URL } = require('../utils/constants');
 
 const userSchema = mongoose.Schema({
   name: {
@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
   },
   avatar: {
     type: String,
-    match: /(http|https):\/\/([\w.]+\/?)\S*/,
+    match: REGEX_URL,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
@@ -38,7 +38,6 @@ const userSchema = mongoose.Schema({
   },
 });
 
-// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {

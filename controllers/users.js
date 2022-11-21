@@ -117,11 +117,12 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user) {
         const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
-        return res.send.cookie('jwt', token, {
+        res.cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           sameSite: true,
         });
+        return res.send({});
       }
       throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
     })
