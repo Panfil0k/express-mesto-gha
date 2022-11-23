@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
-const handlerErrors = require('./middlewares/handlerErrors');
+const { handlerErrors } = require('./middlewares/handlerErrors');
 
 const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/mestodb' } = process.env;
 
