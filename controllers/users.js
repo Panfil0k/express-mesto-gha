@@ -53,10 +53,8 @@ const createUser = (req, res, next) => {
     });
 };
 
-const getUserId = (req, res, next) => {
-  const { userId } = req.params;
-
-  User.findById(userId)
+const getUser = (req, res, next, idUser) => {
+  User.findById(idUser)
     .then((user) => {
       if (user) {
         return res.status(OK_STATUS).send({ data: user });
@@ -70,6 +68,14 @@ const getUserId = (req, res, next) => {
         next(err);
       }
     });
+};
+
+const getUserId = (req, res, next) => {
+  getUser(req, res, next, req.params.userId);
+};
+
+const getAuthorizedUser = (req, res, next) => {
+  getUser(req, res, next, req.user._id);
 };
 
 const updateUserInfo = (req, res, next) => {
@@ -127,23 +133,6 @@ const login = (req, res, next) => {
       throw new UnauthorizedError(MESSAGE_UNAUTHORIZED_ERROR);
     })
     .catch(next);
-};
-
-const getAuthorizedUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (user) {
-        return res.status(OK_STATUS).send({ data: user });
-      }
-      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new RequestError(MESSAGE_REQUEST_ERROR));
-      } else {
-        next(err);
-      }
-    });
 };
 
 module.exports = {
