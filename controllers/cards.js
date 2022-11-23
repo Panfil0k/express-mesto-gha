@@ -1,7 +1,7 @@
 const Card = require('../models/card');
-const REQUEST_ERROR = require('../errors/RequestError');
-const NOT_FOUND_ERROR = require('../errors/NotFoundError');
-const FORBIDDEN_ERROR = require('../errors/ForbiddenError');
+const RequestError = require('../errors/RequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const {
   // OK_STATUS,
   CREATED_STATUS,
@@ -24,7 +24,7 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -33,19 +33,19 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
+    .orFail(new NotFoundError(MESSAGE_NOT_FOUND_ERROR))
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.cardId)
           .then(() => res.send({ message: 'Удалено' }))
           .catch(next);
       } else {
-        next(new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR));
+        next(new ForbiddenError(MESSAGE_FORBIDDEN_ERROR));
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -58,11 +58,11 @@ const likeHandler = (req, res, next, handler) => {
       if (card) {
         return res.send({ data: card });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }

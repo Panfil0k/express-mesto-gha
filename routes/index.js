@@ -4,7 +4,7 @@ const cardsRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { createUser, login } = require('../controllers/users');
 const { signinCheck, signupCheck } = require('../utils/celebrate');
-const NOT_FOUND_ERROR = require('../errors/NotFoundError');
+const NotFoundError = require('../errors/NotFoundError');
 
 router.post('/signin', signinCheck, login);
 
@@ -14,7 +14,7 @@ router.use(auth);
 router.use(usersRouter);
 router.use(cardsRouter);
 router.use('*', (req, res, next) => {
-  next(new NOT_FOUND_ERROR('Запрашиваемая страница не найдена'));
+  next(new NotFoundError('Запрашиваемая страница не найдена'));
 });
 
 module.exports = router;

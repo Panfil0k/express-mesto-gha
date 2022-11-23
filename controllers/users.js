@@ -2,10 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const REQUEST_ERROR = require('../errors/RequestError');
-const NOT_FOUND_ERROR = require('../errors/NotFoundError');
-const UNAUTHORIZED_ERROR = require('../errors/UnauthorizedError');
-const CONFLICT_REQUEST_ERROR = require('../errors/ConflictRequestError');
+const RequestError = require('../errors/RequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+const ConflictRequestError = require('../errors/ConflictRequestError');
 const {
   OK_STATUS,
   CREATED_STATUS,
@@ -44,9 +44,9 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new CONFLICT_REQUEST_ERROR(MESSAGE_CONFLICT_REQUEST_ERROR));
+        next(new ConflictRequestError(MESSAGE_CONFLICT_REQUEST_ERROR));
       } else if (err.name === 'ValidationError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -61,11 +61,11 @@ const getUserId = (req, res, next) => {
       if (user) {
         return res.status(OK_STATUS).send({ data: user });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -80,11 +80,11 @@ const updateUserInfo = (req, res, next) => {
       if (user) {
         return res.send({ data: user });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -99,11 +99,11 @@ const updateUserAvatar = (req, res, next) => {
       if (user) {
         return res.send({ data: user });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
@@ -122,9 +122,9 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         });
-        return res.send({});
+        return res.send({ message: 'Успешно авторизован' });
       }
-      throw new UNAUTHORIZED_ERROR(MESSAGE_UNAUTHORIZED_ERROR);
+      throw new UnauthorizedError(MESSAGE_UNAUTHORIZED_ERROR);
     })
     .catch(next);
 };
@@ -135,11 +135,11 @@ const getAuthorizedUser = (req, res, next) => {
       if (user) {
         return res.status(OK_STATUS).send({ data: user });
       }
-      throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
+      throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new REQUEST_ERROR(MESSAGE_REQUEST_ERROR));
+        next(new RequestError(MESSAGE_REQUEST_ERROR));
       } else {
         next(err);
       }
