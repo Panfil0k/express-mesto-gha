@@ -36,7 +36,7 @@ const deleteCard = (req, res, next) => {
     .orFail(new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        Card.findByIdAndRemove(req.params.cardId)
+        card.remove()
           .then(() => res.send({ message: 'Удалено' }))
           .catch(next);
       }
