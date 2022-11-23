@@ -13,11 +13,7 @@ const MESSAGE_FORBIDDEN_ERROR = 'Нет прав на удаление карт�
 
 const REGEX_URL = /(http|https):\/\/([\w.]+\/?)\S*/;
 
-const crypto = require('crypto');
-
-const secretKey = crypto
-  .randomBytes(16)
-  .toString('hex');
+const { secretKey = 'some-secret-key' } = process.env;
 
 module.exports = {
   OK_STATUS,
