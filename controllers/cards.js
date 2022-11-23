@@ -36,11 +36,12 @@ const deleteCard = (req, res, next) => {
     .orFail(new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR))
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        card.remove()
+        Card.findByIdAndRemove(req.params.cardId)
           .then(() => res.send({ message: 'Удалено' }))
           .catch(next);
+      } else {
+        next(new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR));
       }
-      throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
