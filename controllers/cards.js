@@ -32,13 +32,14 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .populate(['owner'])
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NOT_FOUND_ERROR(MESSAGE_NOT_FOUND_ERROR);
       } else if (card.owner._id.toString() === req.user._id) {
-        return res.status(OK_STATUS).send({ data: card });
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((item) => res.status(OK_STATUS).send({ data: item }))
+          .catch(next);
       }
       throw new FORBIDDEN_ERROR(MESSAGE_FORBIDDEN_ERROR);
     })
