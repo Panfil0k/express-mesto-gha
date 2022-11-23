@@ -43,7 +43,8 @@ app.use(auth);
 app.use(routes);
 app.use(errors());
 
-app.use((err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   const { statusCode = SERVER_ERROR, message } = err;
 
   res.status(statusCode).send({
