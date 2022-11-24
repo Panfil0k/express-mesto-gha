@@ -1,14 +1,17 @@
-# Проект: Место
+[![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml) 
+# Проект: Mesto (back-end)
 
-### Учебный проект. Бэкенд.
+Бэкенд для [проекта Mesto](https://github.com/Panfil0k/react-mesto-auth). Настроены авторизация и регистрация. Реализованы централизованная обработка ошибок и валидация приходящих на сервер запросов.
 
-13-14-й спринты в ЯндексПрактикум.
+## Используемые технологии:
+* Express.js
+* MongoDB
+* NPM
 
-Бэкенд для проекта Mesto. Настроена авторизация и регистрация. Реализовано на **Express** и **MongoDB**.
+## В планах:
+* Объединить с проектом [Mesto (React)](https://github.com/Panfil0k/react-mesto-auth)
 
-[ССЫЛКА](https://github.com/Panfil0k/express-mesto-gha)
-
-## Запуск проекта
+## Запуск проекта:
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
