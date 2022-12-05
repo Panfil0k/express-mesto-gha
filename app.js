@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
 const { handlerErrors } = require('./middlewares/handlerErrors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -15,7 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(DATA_BASE);
 
+app.use(requestLogger);
+
 app.use(routes);
+
+app.use(errorLogger);
 
 app.use(errors());
 
