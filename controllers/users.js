@@ -123,13 +123,7 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user) {
         const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
-        res.cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-          sameSite: 'none',
-          secure: true,
-        });
-        return res.send({ message: 'Успешно авторизован' });
+        return res.send({ token });
       }
       throw new UnauthorizedError(MESSAGE_UNAUTHORIZED_ERROR);
     })

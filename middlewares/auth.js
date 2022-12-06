@@ -3,12 +3,13 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 const { MESSAGE_AUTHENTICATION_ERROR, secretKey } = require('../utils/constants');
 
 module.exports = (req, res, next) => {
-  const token = req.cookies.jwt;
+  const { authorization } = req.headers;
 
-  if (!token) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError(MESSAGE_AUTHENTICATION_ERROR);
   }
 
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {

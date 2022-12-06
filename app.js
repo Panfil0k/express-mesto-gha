@@ -1,7 +1,6 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
@@ -26,7 +25,6 @@ const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/mestodb' } = process
 const app = express();
 
 app.use('*', cors());
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
