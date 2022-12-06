@@ -13,10 +13,9 @@ const {
   MESSAGE_NOT_FOUND_ERROR,
   MESSAGE_UNAUTHORIZED_ERROR,
   MESSAGE_CONFLICT_REQUEST_ERROR,
-  secretKey,
 } = require('../utils/constants');
 
-const { SALT = 10 } = process.env;
+const { SALT = 10, NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -122,7 +121,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (user) {
-        const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
         return res.send({ token });
       }
       throw new UnauthorizedError(MESSAGE_UNAUTHORIZED_ERROR);

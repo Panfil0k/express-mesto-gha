@@ -13,8 +13,6 @@ const MESSAGE_FORBIDDEN_ERROR = 'Нет прав на удаление карт�
 
 const REGEX_URL = /(http|https):\/\/([\w.]+\/?)\S*/;
 
-const { secretKey = 'some-secret-key' } = process.env;
-
 module.exports = {
   OK_STATUS,
   CREATED_STATUS,
@@ -27,5 +25,4 @@ module.exports = {
   MESSAGE_CONFLICT_REQUEST_ERROR,
   MESSAGE_FORBIDDEN_ERROR,
   REGEX_URL,
-  secretKey,
 };
