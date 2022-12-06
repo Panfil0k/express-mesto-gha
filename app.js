@@ -11,7 +11,7 @@ const options = {
   origin: [
     'http://localhost:3000',
     'https://panfilok.students.nomoredomains.club',
-    'https://panfil0k.github.io',
+    'http://panfilok.students.nomoredomains.club',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
