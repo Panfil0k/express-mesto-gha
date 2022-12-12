@@ -3,7 +3,6 @@ const RequestError = require('../errors/RequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const {
-  // OK_STATUS,
   CREATED_STATUS,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
@@ -12,8 +11,7 @@ const {
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .populate(['owner', 'likes'])
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch(next);
 };
 
@@ -21,7 +19,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(CREATED_STATUS).send({ data: card }))
+    .then((card) => res.status(CREATED_STATUS).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(MESSAGE_REQUEST_ERROR));
@@ -56,7 +54,7 @@ const likeHandler = (req, res, next, handler) => {
   Card.findByIdAndUpdate(req.params.cardId, handler, { new: true })
     .then((card) => {
       if (card) {
-        return res.send({ data: card });
+        return res.send(card);
       }
       throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })

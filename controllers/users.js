@@ -4,14 +4,12 @@ const User = require('../models/user');
 
 const RequestError = require('../errors/RequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 const ConflictRequestError = require('../errors/ConflictRequestError');
 const {
   OK_STATUS,
   CREATED_STATUS,
   MESSAGE_REQUEST_ERROR,
   MESSAGE_NOT_FOUND_ERROR,
-  MESSAGE_UNAUTHORIZED_ERROR,
   MESSAGE_CONFLICT_REQUEST_ERROR,
 } = require('../utils/constants');
 
@@ -19,7 +17,7 @@ const { SALT = 10, NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
@@ -56,7 +54,7 @@ const getUser = (req, res, next, idUser) => {
   User.findById(idUser)
     .then((user) => {
       if (user) {
-        return res.status(OK_STATUS).send({ data: user });
+        return res.status(OK_STATUS).send(user);
       }
       throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
@@ -83,7 +81,7 @@ const updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        return res.send({ data: user });
+        return res.send(user);
       }
       throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
@@ -102,7 +100,7 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        return res.send({ data: user });
+        return res.send(user);
       }
       throw new NotFoundError(MESSAGE_NOT_FOUND_ERROR);
     })
@@ -120,11 +118,8 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (user) {
-        const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-        return res.send({ token });
-      }
-      throw new UnauthorizedError(MESSAGE_UNAUTHORIZED_ERROR);
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      return res.send({ token });
     })
     .catch(next);
 };
